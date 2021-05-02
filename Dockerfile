@@ -30,12 +30,12 @@ RUN \
 	unrar && \
  echo "**** install calibre-web ****" && \
  if [ -z ${CALIBREWEB_RELEASE+x} ]; then \
-	CALIBREWEB_RELEASE=$(curl -sX GET "https://api.github.com/repos/janeczku/calibre-web/releases/latest" \
+	CALIBREWEB_RELEASE=$(curl -sX GET "https://api.github.com/repos/luchomarfil/calibre-web/releases/latest" \
 	| awk '/tag_name/{print $4;exit}' FS='[""]'); \
  fi && \
  curl -o \
  /tmp/calibre-web.tar.gz -L \
-	https://github.com/janeczku/calibre-web/archive/${CALIBREWEB_RELEASE}.tar.gz && \
+	https://github.com/luchomarfil/calibre-web/archive/${CALIBREWEB_RELEASE}.tar.gz && \
  mkdir -p \
 	/app/calibre-web && \
  tar xf \
@@ -67,7 +67,7 @@ RUN \
 	/var/lib/apt/lists/* \
 	/var/tmp/* \
 	/root/.cache
-    
+
 # add local files
 COPY root/ /
 
