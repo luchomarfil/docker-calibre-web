@@ -1,8 +1,8 @@
 # syntax=docker/dockerfile:1
 
-FROM ghcr.io/linuxserver/unrar:latest as unrar
+FROM ghcr.io/linuxserver/unrar:latest AS unrar
 
-FROM ghcr.io/linuxserver/baseimage-ubuntu:jammy
+FROM ghcr.io/linuxserver/baseimage-ubuntu:noble
 
 # set version label
 ARG BUILD_DATE
@@ -10,6 +10,9 @@ ARG VERSION
 ARG CALIBREWEB_RELEASE
 LABEL build_version="Linuxserver.io version:- ${VERSION} Build-date:- ${BUILD_DATE}"
 LABEL maintainer="notdriz"
+
+ENV \
+  QTWEBENGINE_CHROMIUM_FLAGS="--no-sandbox"
 
 RUN \
   echo "**** install build packages ****" && \
@@ -23,19 +26,24 @@ RUN \
   apt-get install -y --no-install-recommends \
     imagemagick \
     ghostscript \
-    libldap-2.5-0 \
+    libasound2t64 \
+    libldap2 \
+    libmagic1t64 \
     libsasl2-2 \
     libxi6 \
     libxslt1.1 \
-    python3-venv && \
+    libxfixes3 \
+    python3-venv \
+    sqlite3 \
+    xdg-utils && \
   echo "**** install calibre-web ****" && \
   if [ -z ${CALIBREWEB_RELEASE+x} ]; then \
-   	CALIBREWEB_RELEASE=$(curl -sX GET "https://api.github.com/repos/luchomarfil/calibre-web/releases/latest" \
+    CALIBREWEB_RELEASE=$(curl -sX GET "https://api.github.com/repos/luchomarfil/calibre-web/releases/latest" \
     | awk '/tag_name/{print $4;exit}' FS='[""]'); \
   fi && \
   curl -o \
     /tmp/calibre-web.tar.gz -L \
-    https://github.com/janeczku/calibre-web/archive/${CALIBREWEB_RELEASE}.tar.gz && \
+    https://github.com/luchomarfil/calibre-web/archive/${CALIBREWEB_RELEASE}.tar.gz && \
   mkdir -p \
     /app/calibre-web && \
   tar xf \

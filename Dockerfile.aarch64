@@ -1,15 +1,18 @@
 # syntax=docker/dockerfile:1
 
-FROM ghcr.io/linuxserver/unrar:arm64v8-latest as unrar
+FROM ghcr.io/linuxserver/unrar:arm64v8-latest AS unrar
 
-FROM ghcr.io/linuxserver/baseimage-ubuntu:arm64v8-jammy
+FROM ghcr.io/linuxserver/baseimage-ubuntu:arm64v8-noble
 
 # set version label
 ARG BUILD_DATE
 ARG VERSION
 ARG CALIBREWEB_RELEASE
 LABEL build_version="Linuxserver.io version:- ${VERSION} Build-date:- ${BUILD_DATE}"
-LABEL maintainer="chbmb"
+LABEL maintainer="notdriz"
+
+ENV \
+  QTWEBENGINE_CHROMIUM_FLAGS="--no-sandbox"
 
 RUN \
   echo "**** install build packages ****" && \
@@ -29,11 +32,16 @@ RUN \
   apt-get install -y --no-install-recommends \
     imagemagick \
     ghostscript \
-    libldap-2.5-0 \
+    libasound2t64 \
+    libldap2 \
+    libmagic1t64 \
     libsasl2-2 \
+    libxfixes3 \
     libxi6 \
     libxslt1.1 \
-    python3-venv && \
+    python3-venv \
+    sqlite3 \
+    xdg-utils && \
   echo "**** install calibre-web ****" && \
   if [ -z ${CALIBREWEB_RELEASE+x} ]; then \
     CALIBREWEB_RELEASE=$(curl -sX GET "https://api.github.com/repos/janeczku/calibre-web/releases/latest" \
